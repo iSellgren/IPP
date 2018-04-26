@@ -28,20 +28,9 @@ public class DeviceActivity extends AppCompatActivity {
         Button button = (Button)findViewById(R.id.conbut);
 
 
-        Intent q = new Intent(DeviceActivity.this, LoginActivity.class);
+        Intent q = new Intent(DeviceActivity.this, Selectdevice.class);
         startActivity(q);
 
     }
 
-    public void Livroom(View view) {
-        Toast.makeText(DeviceActivity.this,"Selected the device in livingroom ",Toast.LENGTH_LONG).show();
-    }
-
-    public void bedroom(View view) {
-        Toast.makeText(DeviceActivity.this,"Selected the device in bedroom ",Toast.LENGTH_LONG).show();
-    }
-
-    public void kitchen(View view) {
-        Toast.makeText(DeviceActivity.this,"Selected the device in kitchen ",Toast.LENGTH_LONG).show();
-    }
 }

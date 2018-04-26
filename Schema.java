@@ -33,7 +33,7 @@ public class Schema extends AppCompatActivity implements
         EditText up, down;
         String Up, Down;
         Context ctx=this;
-
+        int progress_value;
         Button btnDatePicker, btnTimePicker,btnStopTimePicker;
         EditText txtDate, txtTime, txtStop;
         private int mYear, mMonth, mDay, mHour, mMinute, mEndHour, mEndMinute;
@@ -98,9 +98,9 @@ public class Schema extends AppCompatActivity implements
                                         public void onTimeSet(TimePicker view, int hourOfDay,
                                                               int minute) {
 
-                                                txtTime.setText(hourOfDay + ":" + minute);
+                                                txtTime.setText(String.format("%02d%02d", hourOfDay, minute));
                                         }
-                                }, mHour, mMinute, true);
+                                }, mHour, mMinute,true);
                         timePickerDialog.show();
                 }
             if (v == btnStopTimePicker) {
@@ -118,7 +118,7 @@ public class Schema extends AppCompatActivity implements
                             public void onTimeSet(TimePicker view, int hourOfDay,
                                                   int minute) {
 
-                                txtStop.setText(hourOfDay + ":" + minute);
+                                txtStop.setText(String.format("%02d%02d", hourOfDay, minute));
                             }
                         }, mEndHour, mEndMinute, true);
                 timeStopPickerDialog.show();
@@ -135,19 +135,16 @@ public class Schema extends AppCompatActivity implements
         seek_bar.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
 
-                    int progress_value;
+
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         progress_value = progress;
                         text_view.setText("Covered : " + progress );
-                        if(text_view != null) {
+
                             infos.setText(txtTime.getText().toString() + " - " + txtStop.getText().toString() + System.getProperty("line.separator") + "On date " + txtDate.getText().toString()+ System.getProperty("line.separator") + "Window covered by " + progress+"%");
-                        }
+
 
                         //Toast.makeText(Schema.this,"SeekBar in progress", Toast.LENGTH_LONG).show();
-                        BackGround b = new BackGround();
-
-                        b.execute(txtStop.getText().toString(), "0");
                     }
 
                     @Override
@@ -164,19 +161,31 @@ public class Schema extends AppCompatActivity implements
         );
 
     }
+    public void Done(View view) {
+
+        BackGround b = new BackGround();
+
+        b.execute(String.valueOf(progress_value), txtTime.getText().toString(), txtStop.getText().toString());
+
+    }
+
+
     class BackGround extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... params) {
             String up = params[0];
-            String down = params[1];
+            String time_up = params[1];
+            String time_down = params[2];
             String id = "1";
             String data="";
             int tmp;
 
             try {
-                URL url = new URL("http://192.168.43.145/process.php");
-                String urlParams = "up="+up+"&down="+down+"&id="+id;
+                URL url = new URL("http://192.168.43.145/time.php");
+
+                String urlParams = "time_up="+up+"&time_end="+time_down+"&time_begin="+time_up+"&id="+id;
+
 
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setDoOutput(true);
@@ -208,9 +217,10 @@ public class Schema extends AppCompatActivity implements
             if(s.equals("")){
                 s="Data saved successfully.";
             }
-            //Toast.makeText(ctx, s, Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, s, Toast.LENGTH_LONG).show();
         }
     }
+
 
 
 }
